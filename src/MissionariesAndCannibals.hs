@@ -1,5 +1,5 @@
 {-# LANGUAGE TupleSections #-}
-module MissionariesAndCannibals where
+module MissionariesAndCannibals(mNc) where
 
 import BFS
 import SearchProblem
