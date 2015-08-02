@@ -1,4 +1,5 @@
 {-# LANGUAGE TupleSections #-}
+
 module MissionariesAndCannibals(missionariesAndCannibals) where
 
 import SearchProblem
