@@ -1,6 +1,6 @@
 {-# LANGUAGE TupleSections #-}
 
-module SlidingPuzzle(slidingPuzzle) where
+module SlidingPuzzle(slidingPuzzle8, slidingPuzzle24) where
 
 import Data.Array
 import Data.List.Ordered
@@ -38,5 +38,17 @@ eightPuzzle :: SlidingState
 eightPuzzle = SlidingState ar (2, 1)
   where ar = array ((0, 0), (2,2)) $ zip (indexHelper 3) [4,3,8,1,6,7,2,-1,5]
 
-slidingPuzzle :: SearchProblem SlidingState SlidingAction
-slidingPuzzle = SearchProblem eightPuzzle actions apply isGoal
+twentyFourPuzzle :: SlidingState
+twentyFourPuzzle = SlidingState ar (2, 1)
+  where ar = array ((0, 0), (4, 4)) $ zip (indexHelper 5) arList
+        arList = [ 6, 14,  5, 12, 15,
+                   1,  8,  7, 16,  9,
+                   2, -1,  3,  4, 22,
+                  11, 17, 13, 20, 24,
+                  21, 10, 23, 18, 19 ]
+
+slidingPuzzle8 :: SearchProblem SlidingState SlidingAction
+slidingPuzzle8 = SearchProblem eightPuzzle actions apply isGoal
+
+slidingPuzzle24 :: SearchProblem SlidingState SlidingAction
+slidingPuzzle24 = SearchProblem twentyFourPuzzle actions apply isGoal

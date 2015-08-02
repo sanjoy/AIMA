@@ -13,6 +13,10 @@ main = do
   putStrLn $ "  " ++ (prettyShowSolution $ uniformCostSearch missionariesAndCannibals)
   putStrLn ""
 
-  putStrLn "Sliding Puzzle, uniform cost search: "
-  putStrLn $ "  " ++ (prettyShowSolution $ uniformCostSearch slidingPuzzle)
+  putStrLn "Sliding Puzzle, 8 blocks, uniform cost search: "
+  putStrLn $ "  " ++ (prettyShowSolution $ uniformCostSearch slidingPuzzle8)
+  putStrLn ""
+
+  putStrLn "Sliding Puzzle, 24 blocks, uniform cost search: "
+  putStrLn $ "  " ++ (prettyShowSolution $ uniformCostSearch slidingPuzzle24)
   putStrLn ""
