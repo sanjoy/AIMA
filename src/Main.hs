@@ -2,11 +2,17 @@
 
 module Main where
 
+import GraphSearch
 import MissionariesAndCannibals
 import SlidingPuzzle
 import UCS
 
 main :: IO ()
 main = do
-  print $ uniformCostSearch missionariesAndCannibals
-  print $ uniformCostSearch slidingPuzzle
+  putStrLn "Missionaries & Cannibals, uniform cost search: "
+  putStrLn $ "  " ++ (prettyShowSolution $ uniformCostSearch missionariesAndCannibals)
+  putStrLn ""
+
+  putStrLn "Sliding Puzzle, uniform cost search: "
+  putStrLn $ "  " ++ (prettyShowSolution $ uniformCostSearch slidingPuzzle)
+  putStrLn ""
