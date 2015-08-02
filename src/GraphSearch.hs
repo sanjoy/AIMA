@@ -7,30 +7,32 @@ import qualified Data.List as L
 
 import SearchProblem
 
-data Node state =
-    Node { getNodeCost :: Integer, getNodeParent :: Node state, getNodeState :: state }
-  | NodeRoot deriving(Show)
+data Node state action =
+    Node { getNodeCost :: Integer, getNodeParent :: Node state action, getNodeState :: state,
+           getNodeAction :: action }
+  | NodeRoot { getNodeState :: state, getNodeCost :: Integer } deriving(Show)
 
-instance Eq a => Eq (Node a) where
-  (Node c p s) == (Node c' p' s') = c == c' && p == p' && s == s'
+instance (Eq s, Eq a) => Eq (Node s a) where
+  (Node c p s a) == (Node c' p' s' a') = c == c' && p == p' && s == s' && a == a'
 
-instance Eq a => Ord (Node a) where
+instance (Eq s, Eq a) => Ord (Node s a) where
   compare x y = compare (getNodeCost x) (getNodeCost y)
 
-data FrontierStore f v =
-  FS { getEmptyStore :: f, getPop :: Ord f => f -> Maybe (f, Node v), getInsert :: Node v -> f -> f }
+data FrontierStore f s a =
+  FS { getEmptyStore :: f, getPop :: Ord f => f -> Maybe (f, Node s a), getInsert :: (Node s a) -> f -> f }
 
-prettyShowSolution :: (Show a) => Maybe (Node a) -> String
+prettyShowSolution :: (Show a) => Maybe (Node s a) -> String
 prettyShowSolution Nothing = "No Solution"
 prettyShowSolution (Just n) =
   let cost = getNodeCost n
-      states = L.unfoldr unfoldNode n
+      actions = reverse $ L.unfoldr unfoldNode n
       unfoldNode n = case n of
-        NodeRoot -> Nothing
-        _ -> Just (getNodeState n, getNodeParent n)
-  in "Cost = " ++ show cost ++ ": " ++ (L.intercalate "; " $ map show states)
+        NodeRoot _ _ -> Nothing
+        _ -> Just (getNodeAction n, getNodeParent n)
+  in "Cost = " ++ show cost ++ ": " ++ (L.intercalate "; " $ map show actions)
 
-graphSearch :: (Ord v, Ord f, Show v, Show f) => SearchProblem v act -> FrontierStore f v -> Maybe (Node v)
+graphSearch :: (Ord s, Ord f, Ord a, Show s, Show f, Show a) =>
+               SearchProblem s a -> FrontierStore f s a -> Maybe (Node s a)
 graphSearch ssp store =
   let frontierInsert = getInsert store
       frontierEmpty = getEmptyStore store
@@ -40,13 +42,13 @@ graphSearch ssp store =
       genActs = getGenApplicableActions ssp
 
       apply = getApplyAction ssp
-      initialFrontier = frontierInsert (Node 0 NodeRoot (getInitialState ssp)) frontierEmpty
+      initialFrontier = frontierInsert (NodeRoot (getInitialState ssp) 0) frontierEmpty
 
       expandChildren node =
         let actsAndCosts = genActs (getNodeState node)
-            mapFst f (a,b) = (f a, b)
-            statesAndCosts = map (mapFst (apply $ getNodeState node)) actsAndCosts
-        in map (\(st, cost) -> Node (cost + getNodeCost node) node st) statesAndCosts
+            getStateFromAction (a, c) = (apply (getNodeState node) a, a, c)
+            statesActionsAndCosts = map getStateFromAction actsAndCosts
+        in map (\(st, act, cost) -> Node (cost + getNodeCost node) node st act) statesActionsAndCosts
 
       searchIter frontier explored = frontierPop frontier >>= searchIterHelper explored
 
