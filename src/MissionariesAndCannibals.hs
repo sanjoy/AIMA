@@ -17,7 +17,7 @@ isValid :: MCState -> Bool
 isValid s = (getStateM s >= getStateC s) || getStateM s == 0
 
 actions :: MCState -> [(Action, Integer)]
-actions state = (map (, 1)) actionsInner
+actions state = map (, 1) actionsInner
   where actionsInner
           | isValid state && isValid (otherSide state) =
               [Action 2 0, Action 1 0, Action 1 1, Action 0 1, Action 0 2]
