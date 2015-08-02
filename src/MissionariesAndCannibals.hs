@@ -2,7 +2,6 @@
 module MissionariesAndCannibals(missionariesAndCannibals) where
 
 import SearchProblem
-import UCS
 
 data MCState = MCState { getStateM :: Int, getStateC :: Int, getStateBoat :: Bool } deriving (Show, Eq, Ord)
 data Action = Action { getActionM :: Int, getActionC :: Int } deriving(Show, Eq, Ord)
