@@ -5,7 +5,7 @@ module Main where
 import GraphSearch
 import MissionariesAndCannibals
 import SlidingPuzzle
-import UCS
+import UniformCostSearch
 
 main :: IO ()
 main = do

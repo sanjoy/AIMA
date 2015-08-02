@@ -1,4 +1,4 @@
-module UCS(uniformCostSearch) where
+module UniformCostSearch(uniformCostSearch) where
 
 import GraphSearch
 import SearchProblem

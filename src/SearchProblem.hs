@@ -8,3 +8,11 @@ data SearchProblem state action = SearchProblem {
   getApplyAction :: state -> action -> state,
   getGoalPredicate :: state -> Bool
   }
+
+
+-- A search problem with a heuristic
+
+data InformedSearchProblem state action = InformedSearchProblem {
+  baseProblem :: SearchProblem state action,
+  heuristic :: state -> Integer
+  }
