@@ -5,11 +5,10 @@ name:                AIMA
 version:             0.1.0.0
 synopsis:            AI: A Modern Approach
 -- description:         
-license:             WTFPL
-license-file:        LICENSE
+license:             GPL-3
 author:              Sanjoy Das
 maintainer:          sanjoy@playingwithpointers.com
--- copyright:           
+copyright:           Sanjoy Das
 category:            Toy
 build-type:          Simple
 extra-source-files:  README
