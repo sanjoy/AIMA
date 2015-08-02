@@ -1,4 +1,4 @@
-module SearchProblem(SearchProblem(..)) where
+module SearchProblem(SearchProblem(..), InformedSearchProblem(..)) where
 
 -- Specification of a problem that can be solved by a graph search.
 
