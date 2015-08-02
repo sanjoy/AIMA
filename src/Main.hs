@@ -1,7 +1,7 @@
 module Main where
 
 import MissionariesAndCannibals
-import BFS
+import UCS
 
 main :: IO ()
-main = print $ bfs mNc
+main = print $ uniformCostSearch missionariesAndCannibals

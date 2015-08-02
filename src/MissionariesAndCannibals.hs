@@ -1,56 +1,36 @@
 {-# LANGUAGE TupleSections #-}
-module MissionariesAndCannibals(mNc) where
+module MissionariesAndCannibals(missionariesAndCannibals) where
 
-import BFS
 import SearchProblem
+import UCS
 
-type M = Int
-type C = Int
-newtype Boat = Boat (Bool, M, C) deriving (Eq, Show, Ord)
-newtype Shore = Shore (M, C) deriving (Eq, Show, Ord)
-
-data MCState = MCState Shore Boat Shore deriving (Eq, Show, Ord)
+data MCState = MCState { getStateM :: Int, getStateC :: Int, getStateBoat :: Bool } deriving (Show, Eq, Ord)
+data Action = Action { getActionM :: Int, getActionC :: Int } deriving(Show, Eq, Ord)
 
 isGoal :: MCState -> Bool
-isGoal (MCState _ _ (Shore (3, 3))) = True
+isGoal (MCState 0 0 _) = True
 isGoal _ = False
 
-gen :: MCState -> [MCState]
-gen (MCState (Shore (lm, lc)) (Boat (b, bm, bc)) (Shore (rm, rc))) =
-  let rowBoat = if (bm + bc) == 0 then [] else
-                  [MCState (Shore (lm, lc)) (Boat (not b, bm, bc)) (Shore (rm, rc))]
+otherSide (MCState m c b) = MCState (3 - m) (3 - c) b
 
-      putBoatA = if b && bm == 0 && rm /= 0 then
-                   [MCState (Shore (lm, lc)) (Boat (b, bm + 1, bc)) (Shore (rm - 1, rc))]
-                 else []
-      putBoatB = if b && bc == 0 && rc /= 0 then
-                   [MCState (Shore (lm, lc)) (Boat (b, bm, bc + 1)) (Shore (rm, rc - 1))]
-                 else []
-      getBoatA = if b && bm /= 0 then
-                   [MCState (Shore (lm, lc)) (Boat (b, bm - 1, bc)) (Shore (rm + 1, rc))]
-                 else []
-      getBoatB = if b && bc /= 0 then
-                   [MCState (Shore (lm, lc)) (Boat (b, bm, bc - 1)) (Shore (rm, rc + 1))]
-                 else []
+isValid :: MCState -> Bool
+isValid s = (getStateM s >= getStateC s) || getStateM s == 0
 
-      putBoatC = if not b && bm == 0 && lm /= 0 then
-                   [MCState (Shore (lm - 1, lc)) (Boat (b, bm + 1, bc)) (Shore (rm, rc))]
-                 else []
-      putBoatD = if not b && bc == 0 && lc /= 0 then
-                   [MCState (Shore (lm, lc - 1)) (Boat (b, bm, bc + 1)) (Shore (rm, rc))]
-                 else []
-      getBoatC = if not b && bm /= 0 then
-                   [MCState (Shore (lm + 1, lc)) (Boat (b, bm - 1, bc)) (Shore (rm, rc))]
-                 else []
-      getBoatD = if not b && bc /= 0 then
-                   [MCState (Shore (lm, lc + 1)) (Boat (b, bm, bc - 1)) (Shore (rm, rc))]
-                 else []
+actions :: MCState -> [(Action, Integer)]
+actions state = (map (, 1)) actionsInner
+  where actionsInner
+          | isValid state && isValid (otherSide state) =
+              [Action 2 0, Action 1 0, Action 1 1, Action 0 1, Action 0 2]
+          | otherwise = []
 
-      total = rowBoat ++ putBoatA ++ putBoatB ++ putBoatC ++ putBoatD ++
-              getBoatA ++ getBoatB ++ getBoatC ++ getBoatD
+apply :: MCState -> Action -> MCState
+apply state act =
+  let sign = if getStateBoat state then -1 else 1
+      newM = getStateM state + sign * getActionM act
+      newC = getStateC state + sign * getActionC act
+      newB = not $ getStateBoat state
+  in MCState newM newC newB
 
-      isValidState = (lm == 0 || lm >= lc) && (rm == 0 || rm >= rc)
-  in if isValidState then total else []
-
-mNc :: SearchProblem MCState
-mNc = SearchProblem [MCState (Shore (3, 3)) (Boat (False, 0, 0)) (Shore (0, 0))] gen isGoal
+missionariesAndCannibals :: SearchProblem MCState Action
+missionariesAndCannibals = SearchProblem initialState actions apply isGoal
+  where initialState = MCState 3 3 True
