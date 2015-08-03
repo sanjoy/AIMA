@@ -19,7 +19,7 @@ instance (Eq s, Eq a) => Ord (Node s a) where
   compare x y = compare (getNodeCost x) (getNodeCost y)
 
 data FrontierStore f s a =
-  FS { getEmptyStore :: f, getPop :: Ord f => f -> Maybe (f, Node s a), getInsert :: (Node s a) -> f -> f }
+  FS { getEmptyStore :: f, getPop :: f -> Maybe (f, Node s a), getInsert :: (Node s a) -> f -> f }
 
 prettyShowSolution :: (Show a) => Maybe (Node s a) -> String
 prettyShowSolution Nothing = "No Solution"
