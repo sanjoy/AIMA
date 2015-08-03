@@ -1,9 +1,11 @@
 {-# LANGUAGE TupleSections #-}
 
-module SlidingPuzzle(slidingPuzzle8, slidingPuzzle24) where
+module SlidingPuzzle(slidingPuzzle8, slidingPuzzle24, informedSlidingPuzzle) where
 
 import Data.Array
+import Data.Foldable
 import Data.List.Ordered
+import Data.Monoid
 import Debug.Trace
 
 import SearchProblem
@@ -47,8 +49,26 @@ twentyFourPuzzle = SlidingState ar (2, 1)
                   11, 17, 13, 20, 24,
                   21, 10, 23, 18, 19 ]
 
+allFixed = SlidingState ar (4, 4)
+  where ar = array ((0, 0), (4, 4)) $ zip (indexHelper 5) arList
+        arList = [1..24] ++ [-1]
+
+heuristic :: SlidingState -> Integer
+heuristic state =
+  let ((_, _), (size, _)) = bounds $ getArray state
+      assocToPoint (idx, value)
+        | value == -1 = (idx, idx)
+        | otherwise = (idx, ((value - 1) `div` (size + 1), (value - 1) `rem` (size + 1)))
+      points = map assocToPoint $ assocs $ getArray state
+  in getSum $ foldMap taxicabDistance points
+  where taxicabDistance ((x, y), (x', y')) = Sum $ fromIntegral $ abs (x - x') + abs (y - y')
+
 slidingPuzzle8 :: SearchProblem SlidingState SlidingAction
 slidingPuzzle8 = SearchProblem eightPuzzle actions apply isGoal
 
 slidingPuzzle24 :: SearchProblem SlidingState SlidingAction
 slidingPuzzle24 = SearchProblem twentyFourPuzzle actions apply isGoal
+
+informedSlidingPuzzle :: SearchProblem SlidingState SlidingAction ->
+                         InformedSearchProblem SlidingState SlidingAction
+informedSlidingPuzzle problem = InformedSearchProblem problem heuristic

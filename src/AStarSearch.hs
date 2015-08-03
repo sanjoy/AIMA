@@ -1,6 +1,6 @@
 {-# LANGUAGE ConstraintKinds, UndecidableInstances #-}
 
-module GreedyBestFirstSearch(greedyBestFirstSearch) where
+module AStarSearch(aStarSearch) where
 
 import GraphSearch
 import SearchProblem
@@ -18,8 +18,8 @@ instance (Eq s, Eq a) => Ord (HeuristicStoreNode s a) where
 bestFirstStore :: (Eq a, Eq s, Show a, Show s) =>
                   (s -> Integer) -> FrontierStore (H.MinHeap (HeuristicStoreNode  s a)) s a
 bestFirstStore heuristic = FS H.empty (fmap ((fmap getHSNValue) . swap) . H.view) (H.insert . makeHSN)
-  where makeHSN n = HeuristicStoreNode n $ heuristic $ getNodeState n
+  where makeHSN n = HeuristicStoreNode n $ getNodeCost n + (heuristic $ getNodeState n)
 
-greedyBestFirstSearch :: (Ord s, Ord a, Show s, Show a) => InformedSearchProblem s a -> Maybe (Node s a)
-greedyBestFirstSearch searchProblem =
-  flip graphSearch (bestFirstStore $ heuristic searchProblem) $ baseProblem searchProblem
+aStarSearch :: (Ord s, Ord a, Show s, Show a) => InformedSearchProblem s a -> Maybe (Node s a)
+aStarSearch searchProblem =
+  flip graphSearch (bestFirstStore $ getSearchHeuristic searchProblem) $ getBaseProblem searchProblem
