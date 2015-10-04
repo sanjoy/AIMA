@@ -2,6 +2,10 @@
 
 module GraphSearch(graphSearch, Node(..), FrontierStore(..), prettyShowSolution) where
 
+-- A Graph Search implementation, based off AIMA
+--
+-- Solves an instance of a SearchProblem
+
 import qualified Data.Set as S
 import qualified Data.List as L
 
@@ -18,8 +22,15 @@ instance (Eq s, Eq a) => Eq (Node s a) where
 instance (Eq s, Eq a) => Ord (Node s a) where
   compare x y = compare (getNodeCost x) (getNodeCost y)
 
+
+-- This data structure is key to parameterizing the graph search.  A
+-- data structure that implements this "interface" stores a set of
+-- "frontier" nodes, and gets to decide the node the graph search will
+-- explore "next".
 data FrontierStore f s a =
-  FS { getEmptyStore :: f, getPop :: f -> Maybe (f, Node s a), getInsert :: (Node s a) -> f -> f }
+  FS { getEmptyStore :: f,
+       getPop :: f -> Maybe (f, Node s a),
+       getInsert :: (Node s a) -> f -> f }
 
 prettyShowSolution :: (Show a) => Maybe (Node s a) -> String
 prettyShowSolution Nothing = "No Solution"
