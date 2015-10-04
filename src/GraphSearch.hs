@@ -31,7 +31,7 @@ prettyShowSolution (Just n) =
         _ -> Just (getNodeAction n, getNodeParent n)
   in "Cost = " ++ show cost ++ ": " ++ (L.intercalate "; " $ map show actions)
 
-graphSearch :: (Ord s, Ord f, Ord a, Show s, Show f, Show a) =>
+graphSearch :: (Ord s, Ord a, Show s, Show a) =>
                SearchProblem s a -> FrontierStore f s a -> Maybe (Node s a)
 graphSearch ssp store =
   let frontierInsert = getInsert store

@@ -25,10 +25,10 @@ main = do
     putStrLn $ "  " ++ (prettyShowSolution $ uniformCostSearch slidingPuzzle24)
     putStrLn ""
 
-  putStrLn "Sliding Puzzle, 8 blocks, greedy best first search: "
+  putStrLn "Sliding Puzzle, 8 blocks, A* search: "
   putStrLn $ "  " ++ (prettyShowSolution $ aStarSearch $ informedSlidingPuzzle slidingPuzzle8)
   putStrLn ""
 
-  putStrLn "Sliding Puzzle, 24 blocks, greedy best first search: "
+  putStrLn "Sliding Puzzle, 24 blocks, A* search: "
   putStrLn $ "  " ++ (prettyShowSolution $ aStarSearch $ informedSlidingPuzzle slidingPuzzle24)
   putStrLn ""
